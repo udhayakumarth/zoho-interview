@@ -46,11 +46,11 @@ public class AtmApplication {
                 System.out.print("Enter UserId : "); int UserId = input.nextInt();
                 System.out.println("");
                 System.out.print("Enter Pin    : "); int Pin = input.nextInt(); 
-                if(UserId==825021 && Pin==5021){
+                if(UserId==825021 && Pin==Account.getPin()){
                     clrscr();
                     while(CustomerFlag){
                         clrscr();
-                        System.out.println("Welcome Customer :)");System.out.println("----------------------------------");System.out.println("Choose any option:");System.out.println("1.Withdraw");System.out.println("2.Check Balance");System.out.println("3.Pin Change");System.out.println("4.Mini Statement");System.out.println("5.Direct Deposit");System.out.println("6.Amount Transfer");System.out.println("7.Logout");System.out.println("----------------------------------");
+                        System.out.println("Welcome Customer :)");System.out.println("----------------------------------");System.out.println("Choose any option:");System.out.println("1.Withdraw");System.out.println("2.Check Balance");System.out.println("3.Pin Change");System.out.println("4.Mini Statement");System.out.println("5.Direct Deposit");System.out.println("6.Logout");System.out.println("----------------------------------");
                         int CustomerInput = input.nextInt();
                         switch(CustomerInput){
                             case 1:
@@ -69,6 +69,7 @@ public class AtmApplication {
                             case 3:
                             clrscr();
                             System.out.println("------Pin Change------");
+                            PinChange();
                             break;
                             case 4:
                             clrscr();
@@ -82,12 +83,11 @@ public class AtmApplication {
                             break;
                             case 6:
                             clrscr();
-                            System.out.println("------Amount Transfer------");
-                            break;
-                            case 7:
-                            clrscr();
                             CustomerFlag = false;
-                            System.out.println("Logout");
+                            System.out.println("------Logout------");
+                            System.out.println("");System.out.println(""); 
+                            System.out.println("Enter 1 to Confirm Logout");
+                            enter = input.next();
                             break;
                             default:
                             clrscr();
@@ -96,10 +96,25 @@ public class AtmApplication {
                         }
                     
                     }
-                    }
+                }else{
+                    clrscr();
+                    System.out.println("Invalid Id or Pin");
+                    System.out.println("");System.out.println(""); 
+                    System.out.println("Enter 1 to Exit");
+                    enter = input.next();
+                }
+            }else if(MainInput==3){
+                clrscr();
+                System.out.println("");System.out.println(""); 
+                System.out.println("Enter 1 to Confirm Exit ");
+                enter = input.next();
+                Mainflag = false;
             }else{
-                System.out.println("Invalid");
-                 Mainflag = false;
+                clrscr();
+                System.out.println("Invalid Input Try Again");
+                System.out.println("");System.out.println(""); 
+                System.out.println("Enter 1 to Continue");
+                enter = input.next();
             }
         }
     }
@@ -222,6 +237,29 @@ public class AtmApplication {
         System.out.println("Enter 1 to Exit");
         enter = input.next();
     }
+
+    public static void PinChange(){
+        System.out.println("");
+        System.out.print("Enter Current Pin : ");int CurrentPin = input.nextInt();
+        if(CurrentPin==Account.getPin()){
+            clrscr();
+            System.out.println("");
+            System.out.print("Enter New Pin : ");int NewPin = input.nextInt();
+            Account.setPin(NewPin);
+            clrscr();
+            System.out.println("");
+            System.out.println("Pin Changed Succesfully.");
+            System.out.println("");System.out.println(""); 
+            System.out.println("Enter 1 to Exit");
+            enter = input.next();
+        }else{
+            clrscr();
+            System.out.println("Invalid Current Pin!");
+            System.out.println("");System.out.println(""); 
+            System.out.println("Enter 1 to Exit");
+            enter = input.next();
+        }
+    }
     public static void clrscr(){
         System.out.print("\033[H\033[2J");  
         System.out.flush();
@@ -264,6 +302,14 @@ class Customer{
       
 
     private static int Pin = 5021;
+
+    public int getPin(){
+        return Pin;
+    } 
+
+    public void setPin(int n){
+        Pin = n;
+    }
 
     public long getAvlBalance(){
         return AvlBalance;
