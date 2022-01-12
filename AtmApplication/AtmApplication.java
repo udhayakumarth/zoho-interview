@@ -9,7 +9,7 @@ public class AtmApplication {
     static String  enter ;
     public static void main(String[] args) {
         boolean Mainflag = true;
-        while (Mainflag){
+        while(Mainflag){
             clrscr();
             System.out.println("Welcome to ATM Application $");System.out.println("----------------------------------");System.out.println("Choose any option:");System.out.println("1.Admin");System.out.println("2.Customer");System.out.println("3.Exit");System.out.println("----------------------------------");
             int MainInput = input.nextInt();
@@ -151,8 +151,8 @@ public class AtmApplication {
         System.out.println("Note: Enter the amount in 100s ");
         System.out.println("");
         System.out.print("Enter Amount : ");int withdrawAmount = input.nextInt();
-        if(withdrawAmount<Account.getAvlBalance()){
-            if(withdrawAmount<Atm.getTotalAtmCash()){
+        if(withdrawAmount<=Account.getAvlBalance()){
+            if(withdrawAmount<=Atm.getTotalAtmCash()){
                 int one = 0;
                 int two = 0;
                 int five = 0;
@@ -260,6 +260,7 @@ public class AtmApplication {
             enter = input.next();
         }
     }
+
     public static void clrscr(){
         System.out.print("\033[H\033[2J");  
         System.out.flush();
