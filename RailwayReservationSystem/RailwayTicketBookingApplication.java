@@ -3,8 +3,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.sound.sampled.SourceDataLine;
-
 public class RailwayTicketBookingApplication {
     static Scanner input  = new Scanner(System.in);
     static String enter;
@@ -26,31 +24,40 @@ public class RailwayTicketBookingApplication {
             int MainInput = input.nextInt();
             switch(MainInput){
                 case 1:
-                boolean Adminloop = true;
-                while(Adminloop){
-                    clrscr();
-                    System.out.println("Welcome Admin :)\n\nChoose any options\n----------------\n1.View Trains\n2.Add Trains\n3.Logout\n----------------\n");
-                    int AdminInput = input.nextInt();
-                    switch(AdminInput){
-                        case 1:
+                clrscr();
+                System.out.print("Enter UserName : ");String AdminUserName = input.next();
+                System.out.print("Enter Pin      : ");int AdminPin = input.nextInt();
+                if(AdminUserName.equals("Root") && AdminPin==5021){
+                    boolean Adminloop = true;
+                    while(Adminloop){
                         clrscr();
-                        ViewTrains();
-                        break;
-                        case 2:
-                        AddTrains();
-                        break;
-                        case 3:
-                        clrscr();
-                        System.out.println("------Logout------\n\nEnter 1 to Confirm\n");
-                        enter = input.next();
-                        Adminloop=false;
-                        break;
-                        default:
-                        clrscr();
-                        System.out.println("Invalid Input\n\nTry Again \n\nEnter 1 to Continue\n");
-                        enter = input.next();
-                        break;
+                        System.out.println("Welcome Admin :)\n\nChoose any options\n----------------\n1.View Trains\n2.Add Trains\n3.Logout\n----------------\n");
+                        int AdminInput = input.nextInt();
+                        switch(AdminInput){
+                            case 1:
+                            clrscr();
+                            ViewTrains();
+                            break;
+                            case 2:
+                            AddTrains();
+                            break;
+                            case 3:
+                            clrscr();
+                            System.out.println("------Logout------\n\nEnter 1 to Confirm\n");
+                            enter = input.next();
+                            Adminloop=false;
+                            break;
+                            default:
+                            clrscr();
+                            System.out.println("Invalid Input\n\nTry Again \n\nEnter 1 to Continue\n");
+                            enter = input.next();
+                            break;
+                        }
                     }
+                }else{
+                    System.out.println("Invalid User Name or Pin");
+                    System.out.println("Logout\n\nEnter 1 to Continue");
+                    enter = input.next();
                 }
                 break;
                 case 2:
@@ -104,8 +111,7 @@ public class RailwayTicketBookingApplication {
                         break;
                         case 3:
                         Authloop = false;
-                        break;
-                        
+                        break;  
                     }
                 }
                 break;
@@ -175,7 +181,6 @@ public class RailwayTicketBookingApplication {
         Train.setTrains(TrainName,Start+" to "+End,NoOfSeats, Stations );
         System.out.println("Train Added Sucessfully \n\nEnter 1 to exit");
         enter = input.next();
-
     }
 
     public static void BookTickets(String UserName){
@@ -224,7 +229,7 @@ public class RailwayTicketBookingApplication {
             }
         if(SeatNo!=0){
             Train.setBookedSeats(TrainNo,Start,End,SeatNo);
-            System.out.println("Ticket booked");
+            System.out.println("\nTicket booked");
             Customers.setTicketHistory(UserName, (String)TrainDetails.get(0), Stations.get(Start)+" to "+Stations.get(End-1),SeatNo);
             System.out.println("seat No : " + SeatNo);
             System.out.println("\n\nEnter 1 to Continue\n");
@@ -235,8 +240,6 @@ public class RailwayTicketBookingApplication {
             System.out.println("\n\nEnter 1 to Continue\n");
             enter = input.next();
         }
-       
-        
     }
 
     public static void TicketHistory(String UserName){
@@ -264,9 +267,7 @@ public class RailwayTicketBookingApplication {
         System.out.flush();
     }
 
-
 }
-
 
 class Train{
     private static List<List> Trains = new ArrayList<List>();
@@ -299,10 +300,7 @@ class Train{
         }
         Train.set(1, Seats);
         Trains.set(TrainNo, Train);
-
     }
-
-
 }
 
 class Customers{
