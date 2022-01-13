@@ -1,9 +1,10 @@
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-public class RailwayTicketBookingApplication {
+public class RailwayApplicationV2 {
     static Scanner input  = new Scanner(System.in);
     static String enter;
     static Train Train = new Train();
@@ -205,38 +206,60 @@ public class RailwayTicketBookingApplication {
         System.out.print("End Station No : ");int End = input.nextInt();
         clrscr();
         System.out.print("\nEnter No Of Ticket : ");int NoOfTicket = input.nextInt();
-        List Seats = (List)TrainTemp.get(1);
-        int SeatNo = 0;
-        for(int i = 0 ;i<(Integer)TrainDetails.get(2);i++){
-            int TicketConfirm =0;
-            for(int j=Start;j<End;j++){
-                List S = (List)Seats.get(j);
-                if((Integer)S.get(i)==0){
-                    TicketConfirm+=1;
+        int[] SeatNo = new int[NoOfTicket];
+        for(int k=0;k<NoOfTicket;k++){
+            List Seats = (List)TrainTemp.get(1);
+            for(int i = 0 ;i<(Integer)TrainDetails.get(2);i++){
+                int TicketConfirm =0;
+                for(int j=Start;j<End;j++){
+                    List S = (List)Seats.get(j);
+                    if((Integer)S.get(i)==0){
+                        TicketConfirm+=1;
+                    }
                 }
-            }
-            if(Start==0){
-                if(TicketConfirm==Start+End){
-                    SeatNo = i+1;
-                    i = (Integer)TrainDetails.get(2);
+                if(Start==0){
+                    if(TicketConfirm==Start+End){
+                        SeatNo[k] = i+1;
+                        for(int j=Start;j<End;j++){
+                            List S = (List)Seats.get(j);
+                            S.set(i, 1);
+                            Seats.set(i, S);
+                        }
+                        i = (Integer)TrainDetails.get(2);
+                    }
+                }else{
+                    if(TicketConfirm==End-Start){
+                        SeatNo[k] = i+1;
+                        for(int j=Start;j<End;j++){
+                            List S = (List)Seats.get(j);
+                            S.set(i, 1);
+                            Seats.set(i, S);
+                        }
+                        i = (Integer)TrainDetails.get(2);
+                    }
                 }
-            }else{
-                if(TicketConfirm==End-Start){
-                    SeatNo = i+1;
-                    i = (Integer)TrainDetails.get(2);
                 }
+        }
+        int Tickets = 0;
+        for(int k=0 ;k<NoOfTicket;k++){
+            if(SeatNo[k]!=0){
+                Tickets+=1;
             }
+        }
+        if(Tickets==NoOfTicket){
+            for(int k=0 ;k<NoOfTicket;k++){
+            Train.setBookedSeats(TrainNo,Start,End,SeatNo[k]);
+            Customers.setTicketHistory(UserName, (String)TrainDetails.get(0), Stations.get(Start)+" to "+Stations.get(End-1),SeatNo[k]);
             }
-        if(SeatNo!=0){
-            Train.setBookedSeats(TrainNo,Start,End,SeatNo);
-            System.out.println("\nTicket booked");
-            Customers.setTicketHistory(UserName, (String)TrainDetails.get(0), Stations.get(Start)+" to "+Stations.get(End-1),SeatNo);
-            System.out.println("seat No : " + SeatNo);
+            System.out.println("\nTicket booked :)\n");
+            System.out.print("seat No : ");
+            for(int i=0; i<SeatNo.length;i++){
+                System.out.print(" "+SeatNo[i]);
+            }
             System.out.println("\n\nEnter 1 to Continue\n");
             enter = input.next();
         }else{
-            System.out.println("Tickets Not Avilable!");
-            enter = input.next();
+            System.out.println("Tickets Not Avilable ):");
             System.out.println("\n\nEnter 1 to Continue\n");
             enter = input.next();
         }
