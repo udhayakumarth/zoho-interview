@@ -312,7 +312,6 @@ class Customers{
         Users.add(User);
     }
 
-
     public void setTicketHistory(String UserName,String TrainName ,String StartEnd,int SeatNo){
         List Ticket = Arrays.asList(TrainName,StartEnd,SeatNo);
         for(int i=0;i<Users.size();i++){
