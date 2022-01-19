@@ -10,7 +10,7 @@ public class AmazonApplication {
     static List<Cart> Cartlist = new ArrayList<>();
     
     public static void main(String[] args){
-        Merchant MerchantTemp  = new Merchant("Sozi","Udhaya","5021",true);
+        Merchant MerchantTemp  = new Merchant("UKMobiles","Uk","5021",true);
         Merchantslist.add(MerchantTemp);
         Customer CustomerTemp  = new Customer("Udhaya","5021");
         Customerlist.add(CustomerTemp);
@@ -53,6 +53,9 @@ public class AmazonApplication {
                 break;
                 case 3:
                 ApproveMerchant();
+                break;
+                case 4:
+                ViewProducts();
                 break;
                 default:
                 System.out.println("Invalid Input Try Again\n Enter 1 to  Continue :");Enter = input.next();loop = false;
@@ -166,6 +169,9 @@ public class AmazonApplication {
                     break;
                     case 4:
                     DeleteProduct(UserName);
+                    break;
+                    case 5:
+                    FrequentCustomer(UserName);
                     break;
                     default:
                     loop = false;
@@ -325,6 +331,23 @@ public class AmazonApplication {
         }
     }
 
+    public static void ViewProducts(){
+        clrscr();
+        System.out.println("------All Product------\n");
+        boolean ProductsNull =true;
+        for(Products i : Productslist){
+            System.out.println("Product Name : "+ i.name+"\nProduct Detail : "+i.detail+"\nSeller : "+i.seller);
+            System.out.println("------");
+            ProductsNull = false;
+        }
+        if(ProductsNull){
+            System.out.println("\n\nNo Product found !");
+            System.out.println("\nEnter 1 to Continue : ");Enter = input.next();
+        }else{
+            System.out.println("\nEnter 1 to Continue : ");Enter = input.next();
+        }
+    }
+
     public static void DeleteProduct(String UserName){
         clrscr();
         System.out.println("------All Product------\n");
@@ -415,6 +438,22 @@ public class AmazonApplication {
         }
     }
 
+    public static void FrequentCustomer(String UserName){
+        clrscr();
+        boolean DataNull = true;
+        for(int i=0 ;i<OrdersList.size();i++){
+            if(OrdersList.get(i).Product.seller.equals(UserName)){
+                System.out.println((i+1)+"."+OrdersList.get(i).Customer);
+                DataNull = false;
+            }
+        }
+        if(DataNull){
+            System.out.println("\n\nNo Data found !");
+            System.out.print("\nEnter 1 to Continue : ");Enter = input.next();
+        }else{
+            System.out.print("\nEnter 1 to Continue : ");Enter = input.next();
+        }
+    }
 }
 
 
