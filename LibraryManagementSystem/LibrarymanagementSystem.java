@@ -23,8 +23,10 @@ public class LibrarymanagementSystem {
         BooksList.add(BookTemp4);
         Book BookTemp5 = new Book("ABriefHistoryOfTime", "Stephen Hawking", "Science", 9780670090509L,149);
         BooksList.add(BookTemp5);
-        Customer CustomerTemp = new Customer("1", "1", "Udhayakumar", "Avinashi,Tiruppur", 1500,CustomerList.size());
-        CustomerList.add(CustomerTemp);
+        Customer CustomerTemp1 = new Customer("1", "1", "Udhayakumar", "Avinashi,Tiruppur", 1500,CustomerList.size());
+        CustomerList.add(CustomerTemp1);
+        Customer CustomerTemp2 = new Customer("2", "2", "Kumarudhaya", "Avinashi,Tiruppur", 1500,CustomerList.size());
+        CustomerList.add(CustomerTemp2);
        boolean loop =true;
        while(loop){
            clrscr();
@@ -35,7 +37,7 @@ public class LibrarymanagementSystem {
                AdminAuth();
                break;
                case 2:
-               Customer();
+               CustomerAuth();
                break;
                default:
                loop = false;
@@ -83,7 +85,7 @@ public class LibrarymanagementSystem {
             while(loop){
                 clrscr();
                 System.out.println("Welcome Admin " +UserName);
-                System.out.println("\nChoose any option : \n----------\n1.Add Book\n2.View All Books\n3.Search Book By ISBN\n4.Search Book By Name\n5.Books Most Used\n6.Books Not Used\n7.Books need Refill\n8.Books Not Returned\n9.Remove Books\n10.Edit Books\n----------");
+                System.out.println("\nChoose any option : \n----------\n1.Add Book\n2.View All Books\n3.Search Book By ISBN\n4.Search Book By Name\n5.Books Most Used\n6.Books Not Used\n7.Books Not Returned\n8.Remove Books\n9.Edit Books\n----------");
                 int AdminInput = input.nextInt();
                 switch(AdminInput){
                     case 1:
@@ -97,6 +99,15 @@ public class LibrarymanagementSystem {
                     break;
                     case 4:
                     BookByName();
+                    break;
+                    case 5:
+                    BookMostUsed();
+                    break;
+                    case 6:
+                    BookNotUsed();
+                    break;
+                    case 7:
+                    BookNotReturned();
                     break;
                     default:
                     loop = false;
@@ -372,7 +383,7 @@ public class LibrarymanagementSystem {
                 }else{
                     boolean AlredyExist = false;
                     for(int j = 0 ; j<CartList.size();j++){
-                        if(i.BookName.equals(CartList.get(j).Book.BookName)){
+                        if(i.BookName.equals(CartList.get(j).Book.BookName) && Customer.Id.equals(CartList.get(j).Customer.Id)){
                             AlredyExist =true;
                         }
                     }
@@ -393,7 +404,7 @@ public class LibrarymanagementSystem {
                                     Added = true;
                                     clrscr();
                                     System.out.println("\nBook Added to Cart");
-                                    System.out.println("\nEnter 1 to Continue \nEnter 2 to Exit \n ");int oneandtwo = input.nextInt();
+                                    System.out.println("\nEnter 1 to Continue \nEnter 2 to MainMenu \n ");int oneandtwo = input.nextInt();
                                     if(oneandtwo==1){
                                         ViewAllBooksCustomer(Customer);
                                     }
@@ -471,7 +482,63 @@ public class LibrarymanagementSystem {
         }
     }
 
-    
+    public static void BookNotReturned(){
+        clrscr();
+        System.out.println("--------Books Not Returned--------\n");
+        boolean BooksNull = true;
+        for(Borrowed i : BorrowedList){
+            System.out.println("ISBN        : "+i.Book.Isbn+"\nName        : "+i.Book.BookName+"\nAuthor      : "+i.Book.Author+"\nGenre       : "+i.Book.Genre+"\nBorrower Name : "+i.Customer.Name+"\nBorrower Id : "+i.Customer.Id+"\n----------\n");
+            BooksNull = false;
+        }
+        if(BooksNull){   
+            System.out.println("\nNo Books Found ");
+            System.out.println("\nEnter 1 to Continue : ");Enter = input.next();
+        }else{
+            System.out.println("\nEnter 1 to Continue : ");Enter = input.next();
+        }
+
+        
+    }
+
+    public static void BookMostUsed(){
+        clrscr();
+        System.out.println("--------Books Most Used--------\n");
+        boolean BooksNull = true;
+        for(Book i : BooksList){
+            if(i.BorrowedCount>=5){
+                System.out.println("ISBN        : "+i.Isbn+"\nName        : "+i.BookName+"\nAuthor      : "+i.Author+"\nGenre       : "+i.Genre+"\nBorrowed Count : "+i.BorrowedCount+"\n----------");
+                BooksNull = false;
+            }
+        }
+        if(BooksNull){   
+            System.out.println("\nNo Books Found ");
+            System.out.println("\nEnter 1 to Continue : ");Enter = input.next();
+        }else{
+            System.out.println("\nEnter 1 to Continue : ");Enter = input.next();
+        }
+    }
+
+    public static void BookNotUsed(){
+        clrscr();
+        System.out.println("--------Books not Used--------\n");
+        boolean BooksNull = true;
+        for(Book i : BooksList){
+            if(i.BorrowedCount<=1){
+                System.out.println("ISBN        : "+i.Isbn+"\nName        : "+i.BookName+"\nAuthor      : "+i.Author+"\nGenre       : "+i.Genre+"\nBorrowed Count : "+i.BorrowedCount+"\n----------");
+                BooksNull = false;
+            }
+        }
+        if(BooksNull){   
+            System.out.println("\nNo Books Found ");
+            System.out.println("\nEnter 1 to Continue : ");Enter = input.next();
+        }else{
+            System.out.println("\nEnter 1 to Continue : ");Enter = input.next();
+        }
+    }
+
+    public static void RemoveBook(){
+
+    }
 
     public static void clrscr(){
         System.out.print("\033[H\033[2J");  
