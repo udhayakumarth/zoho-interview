@@ -32,11 +32,11 @@ Customer Mode
 - Pin    : 5021   
 ### 2.LibraryManagementSystem : 
 Admin Mode
-- UserName : Root
+- UserName : Udhaya
 - Pin    : 5021
 
 
 Customer Mode
-- UserName : Udhaya
-- Pin    : 5021                   
+- UserName : 1
+- Pin    : 1                 
 ### Developer Name : Udhayakumar 
