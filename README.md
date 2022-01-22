@@ -1,6 +1,10 @@
 # ZohoPlacementTraining(2021)
 ### 1.AtmApplication :
-Admin Mode    - UserID : 825021/n
+Admin Mode    - UserID : 825021
+npm
+  ```sh
+  825021
+  ```
                 Pin    : 5021
 Customer Mode - UserID : 825021
                 Pin    : 5021   
