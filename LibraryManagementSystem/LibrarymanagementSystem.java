@@ -1,3 +1,8 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;  
+import java.util.Date; 
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -10,7 +15,8 @@ public class LibrarymanagementSystem {
     static List<Book> BooksList = new ArrayList<>();
     static List<Cart> CartList = new ArrayList<>();
     static List<Borrowed> BorrowedList = new ArrayList<>();
-    public static  void main(String[] args) {
+    static List<Fine> FineList = new ArrayList<>();
+    public static  void main(String[] args) throws ParseException {
         Admin AdminTemp = new Admin("Udhaya", "5021");
         AdminList.add(AdminTemp);
         Book BookTemp1 = new Book("OneNight@CallCenter", "Chetan Bhagat", "Story", 978812910816L,95);
@@ -123,7 +129,7 @@ public class LibrarymanagementSystem {
 
     }
 
-    public static void CustomerAuth(){
+    public static void CustomerAuth() throws ParseException{
         clrscr();
         System.out.println("Choose any option : \n----------\n1.Already have Account\n2.Create Account\n3.Back\n----------\n");
         int AuthInput = input.nextInt();
@@ -148,7 +154,7 @@ public class LibrarymanagementSystem {
         }
     }
 
-    public static void Customer(){
+    public static void Customer() throws ParseException{
         clrscr();
         boolean Auth = false;
         System.out.print("Enter Email : ");String Email = input.next();
@@ -189,6 +195,9 @@ public class LibrarymanagementSystem {
                     loop = false;
                     break;
                 }
+            }
+            for(int i=0 ; i<CartList.size();i++){
+                CartList.remove(i);
             }
         }else{
             clrscr();
@@ -276,7 +285,8 @@ public class LibrarymanagementSystem {
         boolean CartNotNull = false;
         for(int i =0;i<CartList.size();i++){
             if(CartList.get(i).Customer.Id.equals(UserId)){
-                Borrowed BorrowedTemp = new Borrowed(CartList.get(i).Book, CartList.get(i).Customer);
+                String TodayDate = ""+java.time.LocalDate.now();
+                Borrowed BorrowedTemp = new Borrowed(CartList.get(i).Book, CartList.get(i).Customer ,TodayDate);
                 BorrowedList.add(BorrowedTemp);
                 for(int j=0 ;j<BooksList.size();j++){
                     if(BooksList.get(j).Isbn.equals(CartList.get(i).Book.Isbn) && BooksList.get(i).Borrowed==false){
@@ -296,9 +306,9 @@ public class LibrarymanagementSystem {
             Checkout(UserId);
         }else{
             clrscr();
-            for(Customer j : CustomerList){
-                if(j.Id.equals(UserId)){
-                    j.CartItemCount=0;
+            for(Customer i : CustomerList){
+                if(i.Id.equals(UserId)){
+                    i.CartItemCount=0;
                     }
             }
             System.out.println("\nAll Books Checked Out :) ");
@@ -307,7 +317,7 @@ public class LibrarymanagementSystem {
         
     }
 
-    public static void ReturnBook(String UserId){
+    public static void ReturnBook(String UserId) throws ParseException{
         clrscr();
         System.out.println("------Return Book-------\n\n");
         boolean BooksNull = true;
@@ -321,17 +331,44 @@ public class LibrarymanagementSystem {
             System.out.println("\nNo Data Found");
             System.out.println("\nEnter 1 to Continue : ");Enter = input.next();
         }else{
-            System.out.println("\n\nEnter ISBN to Continue : ");Long isbn = input.nextLong();
+            System.out.println("\n\nEnter ISBN         : ");Long isbn = input.nextLong();
+            System.out.println("\n\nEnter Return Date(YYYY-MM-DD)  : ");String ReturnDate = input.next();
             boolean Booknull = true; 
             for(int i=0;i<BorrowedList.size();i++){
                 if(BorrowedList.get(i).Book.Isbn.equals(isbn) && BorrowedList.get(i).Customer.Id.equals(UserId)){
-                    BorrowedList.get(i).Returned = true;
-                    for(Book j : BooksList){
-                        if(j.Isbn.equals(isbn)){
-                            j.Borrowed = false;
+                    String BorrowedDate = BorrowedList.get(i).BorrowedDate;
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
+                    Date firstDate = sdf.parse(BorrowedDate);
+                    Date secondDate = sdf.parse(ReturnDate);
+                    long diff = secondDate.getTime() - firstDate.getTime();
+                    TimeUnit time = TimeUnit.DAYS; 
+                    long diffrence = time.convert(diff, TimeUnit.MILLISECONDS);
+                    if(diffrence>15){
+                        int fine = ((int)diffrence - 15)*2;
+                        System.out.println("Enter the fine Amount of : Rs"+fine);int FineAmount = input.nextInt();
+                        if(FineAmount == fine){
+                            Fine FineTemp = new Fine(BorrowedList.get(i).Book, BorrowedList.get(i).Customer, FineAmount, "Late Return Total "+diffrence+" Days");
+                            FineList.add(FineTemp);
+                            clrscr();
+                            BorrowedList.get(i).Returned = true;
+                            for(Book j : BooksList){
+                                if(j.Isbn.equals(isbn)){
+                                    j.Borrowed = false;
+                                }
+                            }
+                            Booknull = false;
+                        }else{
+                            System.out.println("Invalid");
                         }
+                    }else{
+                        BorrowedList.get(i).Returned = true;
+                        for(Book j : BooksList){
+                            if(j.Isbn.equals(isbn)){
+                                j.Borrowed = false;
+                            }
+                        }
+                        Booknull = false;
                     }
-                    Booknull = false;
                 }
             }
             if(Booknull){
@@ -350,7 +387,7 @@ public class LibrarymanagementSystem {
         boolean BooksNull = true;
         for(Borrowed i : BorrowedList){
             if(i.Customer.Id.equals(UserId)){
-                System.out.println("ISBN        : "+i.Book.Isbn+"\nName        : "+i.Book.BookName+"\nAuthor      : "+i.Book.Author+"\nGenre       : "+i.Book.Genre+"\nReturned    : "+i.Returned+"\n----------");
+                System.out.println("ISBN        : "+i.Book.Isbn+"\nName        : "+i.Book.BookName+"\nAuthor      : "+i.Book.Author+"\nGenre       : "+i.Book.Genre+"\nReturned    : "+i.Returned+"\nBorrowed Date : "+i.BorrowedDate+"\nReturned Date : "+i.ReturnedDate+"\n----------");
                 BooksNull = false;
             }
         }
@@ -487,7 +524,7 @@ public class LibrarymanagementSystem {
         System.out.println("--------Books Not Returned--------\n");
         boolean BooksNull = true;
         for(Borrowed i : BorrowedList){
-            System.out.println("ISBN        : "+i.Book.Isbn+"\nName        : "+i.Book.BookName+"\nAuthor      : "+i.Book.Author+"\nGenre       : "+i.Book.Genre+"\nBorrower Name : "+i.Customer.Name+"\nBorrower Id : "+i.Customer.Id+"\n----------\n");
+            System.out.println("ISBN        : "+i.Book.Isbn+"\nName        : "+i.Book.BookName+"\nAuthor      : "+i.Book.Author+"\nGenre       : "+i.Book.Genre+"\nBorrower Name : "+i.Customer.Name+"\nBorrower Id : "+i.Customer.Id+"\nBorrowed Date : "+i.BorrowedDate+"----------\n");
             BooksNull = false;
         }
         if(BooksNull){   
@@ -598,9 +635,22 @@ class Borrowed{
     Book Book ;
     Customer Customer;
     boolean Returned = false;
-    public Borrowed(Book Book , Customer Customer){
+    String BorrowedDate , ReturnedDate ;
+    public Borrowed(Book Book , Customer Customer,String BorrowedDate){
         this.Book =  Book;
         this.Customer = Customer;
+        this.BorrowedDate = BorrowedDate;
+    }
+
+}
+
+class Fine{
+    Book Book ;
+    Customer Customer;
+    int Fine;
+    String Reason;
+    public Fine(Book Book , Customer Customer , int Fine , String Reason){
+
     }
 
 }
