@@ -37,6 +37,6 @@ Admin Mode
 
 
 Customer Mode
-- UserName : 1
-- Pin    : 1                 
+- UserName : customer@gmail.com
+- Pin    : customer123                 
 ### Developer Name : Udhayakumar 

@@ -1,7 +1,6 @@
 import java.text.ParseException;
-import java.text.SimpleDateFormat;  
+import java.time.LocalDate;
 import java.util.Date; 
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +28,7 @@ public class LibrarymanagementSystem {
         BooksList.add(BookTemp4);
         Book BookTemp5 = new Book("ABriefHistoryOfTime", "Stephen Hawking", "Science", 9780670090509L,149);
         BooksList.add(BookTemp5);
-        Customer CustomerTemp1 = new Customer("1", "1", "Udhayakumar", "Avinashi,Tiruppur", 1500,CustomerList.size());
+        Customer CustomerTemp1 = new Customer("customer@gmail.com", "customer123", "Udhayakumar", "Avinashi,Tiruppur", 1500,CustomerList.size());
         CustomerList.add(CustomerTemp1);
         Customer CustomerTemp2 = new Customer("2", "2", "Kumarudhaya", "Avinashi,Tiruppur", 1500,CustomerList.size());
         CustomerList.add(CustomerTemp2);
@@ -184,6 +183,7 @@ public class LibrarymanagementSystem {
                     BorrowedHistory(Customer.Id);
                     break;
                     case 4:
+                    FineHistory(Customer.Id);
                     break;
                     case 6:
                     ReturnBook(Customer.Id);
@@ -285,8 +285,8 @@ public class LibrarymanagementSystem {
         boolean CartNotNull = false;
         for(int i =0;i<CartList.size();i++){
             if(CartList.get(i).Customer.Id.equals(UserId)){
-                String TodayDate = ""+java.time.LocalDate.now();
-                Borrowed BorrowedTemp = new Borrowed(CartList.get(i).Book, CartList.get(i).Customer ,TodayDate);
+                LocalDate Today = LocalDate.now();
+                Borrowed BorrowedTemp = new Borrowed(CartList.get(i).Book, CartList.get(i).Customer ,Today.getDayOfMonth(),Today.getMonthValue(),Today.getYear());
                 BorrowedList.add(BorrowedTemp);
                 for(int j=0 ;j<BooksList.size();j++){
                     if(BooksList.get(j).Isbn.equals(CartList.get(i).Book.Isbn) && BooksList.get(i).Borrowed==false){
@@ -332,25 +332,30 @@ public class LibrarymanagementSystem {
             System.out.println("\nEnter 1 to Continue : ");Enter = input.next();
         }else{
             System.out.println("\n\nEnter ISBN         : ");Long isbn = input.nextLong();
-            System.out.println("\n\nEnter Return Date(YYYY-MM-DD)  : ");String ReturnDate = input.next();
+            System.out.println("\n\nEnter Return Date :");
+            System.out.print("\nDay(dd)    : ");int Day = input.nextInt();
+            System.out.print("\nMonth(mm)  : ");int Month = input.nextInt();
+            System.out.print("\nYear(yyyy) : ");int Year = input.nextInt();
             boolean Booknull = true; 
             for(int i=0;i<BorrowedList.size();i++){
                 if(BorrowedList.get(i).Book.Isbn.equals(isbn) && BorrowedList.get(i).Customer.Id.equals(UserId)){
-                    String BorrowedDate = BorrowedList.get(i).BorrowedDate;
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
-                    Date firstDate = sdf.parse(BorrowedDate);
-                    Date secondDate = sdf.parse(ReturnDate);
-                    long diff = secondDate.getTime() - firstDate.getTime();
-                    TimeUnit time = TimeUnit.DAYS; 
-                    long diffrence = time.convert(diff, TimeUnit.MILLISECONDS);
+                    Date BorrowedDate = new Date(BorrowedList.get(i).BorrowedYear , BorrowedList.get(i).BorrowedMonth,BorrowedList.get(i).BorrowedDay);
+                    Date TodayDate = new Date(Year,Month,Day);
+                    long Date1= TimeUnit.MILLISECONDS.toDays(TodayDate.getTime());
+                    long Date2= TimeUnit.MILLISECONDS.toDays(BorrowedDate.getTime());
+                    long diffrence = Date1 - Date2;
                     if(diffrence>15){
                         int fine = ((int)diffrence - 15)*2;
-                        System.out.println("Enter the fine Amount of : Rs"+fine);int FineAmount = input.nextInt();
+                        clrscr();
+                        System.out.print("Enter the fine Amount of Rs : "+fine);int FineAmount = input.nextInt();
                         if(FineAmount == fine){
-                            Fine FineTemp = new Fine(BorrowedList.get(i).Book, BorrowedList.get(i).Customer, FineAmount, "Late Return Total "+diffrence+" Days");
+                            Fine FineTemp = new Fine(BorrowedList.get(i), FineAmount, "Late Return Total "+diffrence+" Days");
                             FineList.add(FineTemp);
                             clrscr();
                             BorrowedList.get(i).Returned = true;
+                            BorrowedList.get(i).ReturnedDay = Day;
+                            BorrowedList.get(i).ReturnedMonth = Month;
+                            BorrowedList.get(i).ReturnedYear = Year;
                             for(Book j : BooksList){
                                 if(j.Isbn.equals(isbn)){
                                     j.Borrowed = false;
@@ -387,7 +392,7 @@ public class LibrarymanagementSystem {
         boolean BooksNull = true;
         for(Borrowed i : BorrowedList){
             if(i.Customer.Id.equals(UserId)){
-                System.out.println("ISBN        : "+i.Book.Isbn+"\nName        : "+i.Book.BookName+"\nAuthor      : "+i.Book.Author+"\nGenre       : "+i.Book.Genre+"\nReturned    : "+i.Returned+"\nBorrowed Date : "+i.BorrowedDate+"\nReturned Date : "+i.ReturnedDate+"\n----------");
+                System.out.println("ISBN        : "+i.Book.Isbn+"\nName        : "+i.Book.BookName+"\nAuthor      : "+i.Book.Author+"\nGenre       : "+i.Book.Genre+"\nReturned    : "+i.Returned+"\nBorrowed Date : "+i.BorrowedDay+"-"+i.BorrowedMonth+"-"+i.BorrowedYear+"\nReturned Date : "+"\n----------");
                 BooksNull = false;
             }
         }
@@ -524,7 +529,7 @@ public class LibrarymanagementSystem {
         System.out.println("--------Books Not Returned--------\n");
         boolean BooksNull = true;
         for(Borrowed i : BorrowedList){
-            System.out.println("ISBN        : "+i.Book.Isbn+"\nName        : "+i.Book.BookName+"\nAuthor      : "+i.Book.Author+"\nGenre       : "+i.Book.Genre+"\nBorrower Name : "+i.Customer.Name+"\nBorrower Id : "+i.Customer.Id+"\nBorrowed Date : "+i.BorrowedDate+"----------\n");
+            System.out.println("ISBN        : "+i.Book.Isbn+"\nName        : "+i.Book.BookName+"\nAuthor      : "+i.Book.Author+"\nGenre       : "+i.Book.Genre+"\nBorrower Name : "+i.Customer.Name+"\nBorrower Id : "+i.Customer.Id+"\nBorrowed Date : "+i.BorrowedDay+"-"+i.BorrowedMonth+"-"+i.BorrowedYear+"\n----------\n");
             BooksNull = false;
         }
         if(BooksNull){   
@@ -577,11 +582,30 @@ public class LibrarymanagementSystem {
 
     }
 
+    public static void FineHistory(String UserId){
+        clrscr();
+        System.out.println("------Fine History-------\n\n");
+        boolean BooksNull = true;
+        for(Fine  i : FineList){
+            if(i.Borrowed.Customer.Id.equals(UserId)){
+                System.out.println("ISBN        : "+i.Borrowed.Book.Isbn+"\nName        : "+i.Borrowed.Book.BookName+"\nAuthor      : "+i.Borrowed.Book.Author+"\nGenre       : "+i.Borrowed.Book.Genre+"\nReturned    : "+i.Borrowed.Returned+"\nBorrowed Date : "+i.Borrowed.BorrowedDay+"-"+i.Borrowed.BorrowedMonth+"-"+i.Borrowed.BorrowedYear+"\nReturned Date : "+i.Borrowed.ReturnedDay+"-"+i.Borrowed.ReturnedMonth+"-"+i.Borrowed.ReturnedYear+"\nFine Amount Rs: "+i.Fine+"\nFine Reson : "+i.Reason+"\n----------");
+                BooksNull = false;
+            }
+        }
+        if(BooksNull){
+            System.out.println("\nNo Data Found");
+            System.out.println("\nEnter 1 to Continue : ");Enter = input.next();
+        }else{
+            System.out.println("\n\nEnter 1 to Continue : ");Enter = input.next();
+        }
+    }
+
     public static void clrscr(){
         System.out.print("\033[H\033[2J");  
         System.out.flush();
     }
 }
+
 
 class Book{
     String BookName , Author , Genre ;
@@ -635,22 +659,26 @@ class Borrowed{
     Book Book ;
     Customer Customer;
     boolean Returned = false;
-    String BorrowedDate , ReturnedDate ;
-    public Borrowed(Book Book , Customer Customer,String BorrowedDate){
+    int BorrowedDay ,BorrowedMonth , BorrowedYear , ReturnedDay ,ReturnedMonth ,ReturnedYear ;
+    
+    public Borrowed(Book Book , Customer Customer,int BorrowedDay ,int BorrowedMonth ,int BorrowedYear){
         this.Book =  Book;
         this.Customer = Customer;
-        this.BorrowedDate = BorrowedDate;
+        this.BorrowedDay = BorrowedDay;
+        this.BorrowedMonth= BorrowedMonth;
+        this.BorrowedYear = BorrowedYear;
     }
 
 }
 
 class Fine{
-    Book Book ;
-    Customer Customer;
+    Borrowed Borrowed;
     int Fine;
     String Reason;
-    public Fine(Book Book , Customer Customer , int Fine , String Reason){
-
+    public Fine(Borrowed Borrowed, int Fine , String Reason){
+        this.Borrowed = Borrowed;
+        this.Fine = Fine;
+        this.Reason = Reason;
     }
 
 }
