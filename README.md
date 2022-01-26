@@ -30,7 +30,7 @@ Merchant Mode
 Customer Mode
 - UserName : Udhaya
 - Pin    : 5021   
-### 2.LibraryManagementSystem : 
+### 4.LibraryManagementSystem : 
 Admin Mode
 - UserName : Udhaya
 - Pin    : 5021
@@ -38,5 +38,8 @@ Admin Mode
 
 Customer Mode
 - UserName : customer@gmail.com
-- Pin    : customer123                 
+- Pin    : customer123     
+### 4.LibraryManagementSystem : 
+
+Not Completed .
 ### Developer Name : Udhayakumar 
